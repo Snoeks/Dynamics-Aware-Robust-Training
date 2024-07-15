@@ -270,7 +270,7 @@ def DyART_loss_Linf(model,X,y,lam_robust,temperature,\
     else:
         robust_acc_estimate = 0
     batch_metrics = {'loss': loss.item(), 'clean_acc': clean_acc, 
-                     'adversarial_acc': robust_acc_estimate.item()}
+                     'adversarial_acc': robust_acc_estimate}
     
     model.zero_grad() 
     
