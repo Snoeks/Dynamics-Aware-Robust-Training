@@ -108,7 +108,7 @@ def find_bdr_Linf(model,func,X,y,restart_FAB,iter_FAB,eps_FAB,use_high_quality =
         x_bdr = torch.zeros([0,*X[0].size()]); unit_dist_vec = torch.zeros([0,*X[0].size()])
         ind_discard = torch.Tensor([]); delta_norm = torch.Tensor([])
         grad_x_phi = torch.zeros([0,*X[0].size()])
-        return x_bdr.clone().detach().cpu(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
+        return x_bdr.clone().detach(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
 
     x_bdr = find_bdr_FAB(model=model,func=func,X=x_orig,y=y_orig,n_restarts=restart_FAB,n_iter=iter_FAB,\
                          norm='Linf',eps=eps_FAB,verbose=False,**kwargs_func)
@@ -179,7 +179,7 @@ def find_bdr_Linf(model,func,X,y,restart_FAB,iter_FAB,eps_FAB,use_high_quality =
         q = torch.linspace(0, 1, steps=5).cuda() # quantile [0,1/4,2/4,3/4,1]
         print("distance quantile * 255: ",torch.quantile(delta_norm*255, q).data.cpu().numpy())  
     
-    return x_bdr.clone().detach().cpu(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
+    return x_bdr.clone().detach(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
 
 
 def get_radius_weights(h_prime,x_bdr,x_orig,grad_x,norm_type,normalize_weight = False,**kwargs_h_prime):
