@@ -137,7 +137,7 @@ def find_bdr_Linf(model,func,X,y,restart_FAB,iter_FAB,eps_FAB,use_high_quality =
     ## find high quality points (local closest boundary pt)
     x_bdr.requires_grad = True
     phi = func(model, x_bdr,y_orig, **kwargs_func)
-    assert torch.sum(phi > 1e-1) ==0, 'find_bdr_Linf: positive phi found for \'adv\' examples'
+    assert torch.sum(phi > 1e-2) ==0, 'find_bdr_Linf: positive phi found for \'adv\' examples'
 
     grad_x_phi = grad(outputs=phi, inputs=x_bdr, grad_outputs=torch.ones_like(phi))[0].detach()
     
