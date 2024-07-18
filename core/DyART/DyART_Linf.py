@@ -104,11 +104,11 @@ def find_bdr_Linf(model,func,X,y,restart_FAB,iter_FAB,eps_FAB,use_high_quality =
     y_orig = y[ind_correct]
 
     if x_orig.size(0) == 0:
-        print('find_bdr_Linf: No points with positive phi')
+        # print('find_bdr_Linf: No points with positive phi')
         x_bdr = torch.zeros([0,*X[0].size()]); unit_dist_vec = torch.zeros([0,*X[0].size()])
         ind_discard = torch.Tensor([]); delta_norm = torch.Tensor([])
         grad_x_phi = torch.zeros([0,*X[0].size()])
-        return x_bdr.clone().detach(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
+        return x_bdr.detach(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
 
     x_bdr = find_bdr_FAB(model=model,func=func,X=x_orig,y=y_orig,n_restarts=restart_FAB,n_iter=iter_FAB,\
                          norm='Linf',eps=eps_FAB,verbose=False,**kwargs_func)
@@ -121,7 +121,7 @@ def find_bdr_Linf(model,func,X,y,restart_FAB,iter_FAB,eps_FAB,use_high_quality =
     ind_bdr = ind_bdr[ind_succ_attack]
     
     if num_succ_attack == 0:
-        print('find_bdr_Linf: No successful attacks by FAB')
+        # print('find_bdr_Linf: No successful attacks by FAB')
         grad_x_phi = torch.zeros([0,*X[0].size()])
         ind_discard = ind_correct[~ind_succ_attack]
         return x_bdr[ind_succ_attack].detach(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
@@ -173,13 +173,13 @@ def find_bdr_Linf(model,func,X,y,restart_FAB,iter_FAB,eps_FAB,use_high_quality =
     grad_x_phi = grad_x_phi[ind_high_quality]
     
 
-    print('find_bdr_Linf: \'correct\':{:.3f} adv_succ:{:.3f} high_quality:{:.3f}'.format(num_correct.item()/X.size(0),\
-                                                      num_succ_attack.item()/X.size(0),num_bdr.item()/X.size(0)))
+    # print('find_bdr_Linf: \'correct\':{:.3f} adv_succ:{:.3f} high_quality:{:.3f}'.format(num_correct.item()/X.size(0),\
+    #                                                   num_succ_attack.item()/X.size(0),num_bdr.item()/X.size(0)))
     if x_bdr.size(0) > 0:
         q = torch.linspace(0, 1, steps=5).cuda() # quantile [0,1/4,2/4,3/4,1]
-        print("distance quantile * 255: ",torch.quantile(delta_norm*255, q).data.cpu().numpy())  
+        # print("distance quantile * 255: ",torch.quantile(delta_norm*255, q).data.cpu().numpy())  
     
-    return x_bdr.clone().detach(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
+    return x_bdr.detach(),ind_bdr,ind_wrong,ind_discard,ind_correct,grad_x_phi
 
 
 def get_radius_weights(h_prime,x_bdr,x_orig,grad_x,norm_type,normalize_weight = False,**kwargs_h_prime):
@@ -248,8 +248,8 @@ def DyART_loss_Linf(model,X,y,lam_robust,temperature,\
         weights, R = get_radius_weights(h_prime,x_bdr,X[ind_bdr],grad_x,norm_type='Linf',\
                                                         normalize_weight = False, **kwargs_h_prime)
         q = torch.linspace(0, 1, steps=5).cuda() # quantile [0,1/4,2/4,3/4,1]
-        print("weights sum:{:.3f}, weights/its_average: {} ".format(weights.sum().item(),\
-                torch.quantile(weights/weights.mean(), q).data.cpu().numpy())) 
+        # print("weights sum:{:.3f}, weights/its_average: {} ".format(weights.sum().item(),\
+        #         torch.quantile(weights/weights.mean(), q).data.cpu().numpy())) 
         
         loss_bdr = - func_soft_margin(model,x_bdr,y[ind_bdr],**kwargs_func) 
         loss_bdr = torch.sum(loss_bdr*weights)/ X.size(0)
@@ -262,7 +262,7 @@ def DyART_loss_Linf(model,X,y,lam_robust,temperature,\
     
     loss = loss_clean + loss_bdr * lam_robust
     
-    print('clean:{:.3f} robust:{:.3f}'.format(loss_clean,loss_bdr * lam_robust)) # loss_bdr is about zero (when not using BN)
+    # print('clean:{:.3f} robust:{:.3f}'.format(loss_clean,loss_bdr * lam_robust)) # loss_bdr is about zero (when not using BN)
     
     clean_acc = (torch.max(outputs_clean, 1)[1] == y).double().mean().item()   
     if x_bdr.size(0) > 0:
